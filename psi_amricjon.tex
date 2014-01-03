@@ -10,6 +10,8 @@
 \usepackage{mathtools}
 \usepackage{titling}
 
+\usepackage{hyphenat}
+
 \setlength\parindent{0pt}
 \setlength\mathindent{0pt}
 
@@ -20,6 +22,16 @@
     \vskip0.5em}%
 }
 
+\newsavebox\MyBreakChar%
+\sbox\MyBreakChar{\hyp}% char to display the break after non char
+\makeatletter%
+\newcommand*{\BreakableChar}[1][\MyBreakChar]{%
+  \leavevmode%
+  \prw@zbreak%
+  \discretionary{\usebox#1}{}{}%
+  \prw@zbreak%
+}%
+
 \title{Analýza clusterů pomocí $\chi^2$ testu}
 \subtitle{Zápočtová práce z A0B01PSI, ČVUT FEL}
 
@@ -29,11 +41,11 @@
 \begin{document}
     \maketitle
     \section{Úvod}
-    Pro svou zápočtovou práci jsem si vybral problém, se kterým jsem se setkal v jiném projektu na ČVUT. Cílem je identifikace clusterů v daném vektorovém prostoru. Jednou z možností, která není příliš výpočetně náročná a kterou můžeme vyvrátit existenci clusterů v prostoru, je analýza vzájemných vzdáleností (pairwise distances) jednotlivých bodů. V případě, že prostor obsahuje clustery, rozdělení vzájemných vzdáleností by mělo být směsí dvou rozdělení - \textit{inter}clusterových a \textit{intra}clusterových vzdáleností. V opačném případě, kdy body v prostoru netvoří clustery, předpokládáme, že je rozdělení vzájemných vzdáleností normální.
+    Pro svou zápočtovou práci jsem si vybral problém, se kterým jsem se setkal v jiném projektu na ČVUT. Cílem je identifikace clusterů v daném vektorovém prostoru. Jednou z možností, která není příliš výpočetně náročná a kterou můžeme vyvrátit existenci clusterů v prostoru, je analýza vzájemných vzdáleností (pairwise distances) jednotlivých bodů. V případě, že prostor obsahuje clustery, rozdělení vzájemných vzdáleností by mělo být směsí dvou rozdělení - \textit{inter}clusterových a \textit{intra}clusterových vzdáleností. V opačném případě, kdy body v prostoru netvoří clustery, předpokládá\BreakableChar{}me, že je rozdělení vzájemných vzdáleností normální.
 
     \section{Data}
     Mým datasetem jsou vzájemné vzdálenosti vektorů, které byly vytvořeny pomocí nástroje word2vec \cite{mikolov2013efficient}. Dataset "99k" obsahuje cca 99 tisíc vektorů slov v 600 dimenzích, které byly natrénovány pomocí anglické wikipedie \cite{wiki}.
-    Pro účely testu diskretizuji rozdělení vzdáleností do 50, respektive 100 disjunktních tříd. Vzhledem k množství dat jsem z těchto tříd pro test použil jen ty, jejichž teoretická četnost přesahovala $10^8$ (v grafu znázorněno žlutým pruhem).
+    Pro účely testu diskretizuji rozdělení vzdáleností do 50, respektive 100 disjunktních tříd. Vzhledem k množství dat jsem z těchto tříd pro test použil jen ty třídy, jejichž teoretická četnost přesahovala $10^8$ (v grafu znázorněno žlutým pruhem).
 
     \section{Test}
 
@@ -44,7 +56,7 @@
     $N$ - normální rozdělení\\
     $N = N(\mu_X, \sigma_X^2)$\\
     \\
-    $H_0$: Vzájemné vzdálenosti mají normální rozdělení na hladině významnosti 5\%\\
+    $H_0$: Vzájemné vzdálenosti mají normální rozdělení na hladině významnosti 5\,\%\\
 
     % 50 tříd
     \begin{table}[htp]
@@ -92,7 +104,7 @@
     $T_{50} > q_{\chi^2(50)}(99.95) > q_{\chi^2(50)}(95)$\\
     $T_{100} > q_{\chi^2(100)}(99.95) > q_{\chi^2(100)}(95)$\\
     \\
-    Už při pohledu na graf je vidět, že testovací statistika bude řádově převyšovat jak 95\%, tak 99.95\% kvantil $\chi^2$ rozdělení, hypotézu tedy zamítáme.
+    Už při pohledu na graf je vidět, že testovací statistika bude řádově převyšovat jak 95\,\%, tak 99.95\,\% kvantil $\chi^2$ rozdělení, hypotézu tedy zamítáme.
 
     \begin{figure}[htp]
         \footnotesize
@@ -108,7 +120,10 @@
         \includegraphics[width=13cm]{figures/enwiki-99k-100bins.png}
     \end{figure}
 
+    \section{Zdrojové kódy}
+    Všechny zdrojové kódy jsou k dispozici v mém repozitáři na GitHubu \cite{ghrepo}, potřebná data na \cite{data}.
+
     \renewcommand\refname{\section{Reference}}
     \bibliographystyle{unsrt}
-    \bibliography{bibtex/mikolov2013efficient,bibtex/ghrepo,bibtex/wiki}
+    \bibliography{bibtex/mikolov2013efficient,bibtex/ghrepo,bibtex/wiki,bibtex/data}
 \end{document}
